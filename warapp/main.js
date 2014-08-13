@@ -8,15 +8,21 @@ app.controller("WargamingController", function($scope) {
     var b = 3;
 
     $scope.compareUsers = function() {
-        console.log('compare');
-        getUserIdByNickname($scope.first_user).then(function(id) {
-            console.log(id);
-        });
-        getUserIdByNickname($scope.second_user).then(function(id) {
-            console.log(id);
-        });
+        setObjectForUser($scope.first_user, $scope.first_obj);
+        setObjectForUser($scope.second_user, $scope.second_obj);
     }
 });
+
+function setObjectForUser(nickname, variableToSet) {
+    var user = variableToSet;
+    getUserIdByNickname(nickname).then(function(id) {
+        console.log(id);
+        getUserDataById(id).then(function(oUser) {
+            user = oUser;
+            console.log(user);
+        });
+    });
+}
 
 function getUserIdByNickname(nickname) {
     var url = "https://api.worldoftanks.ru/wot/account/list/?application_id=" + app_id + "&search=" + nickname;
@@ -27,6 +33,16 @@ function getUserIdByNickname(nickname) {
     });
     return deferred.promise;
 };
+
+function getUserDataById(id) {
+    var url = "https://api.worldoftanks.ru/wot/account/info/?application_id=" + app_id + "&account_id=" + id;
+    var p = Q.defer();
+    requestOkText(url).then(function(response_text) {
+        var oJSON = JSON.parse(response_text);
+        p.resolve(oJSON);
+    });
+    return p.promise;
+}
 
 function requestOkText(url) {
         "use strict";
