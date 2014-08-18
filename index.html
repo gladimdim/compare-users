@@ -1,25 +1,34 @@
+<!DOCTYPE html>
 <meta name="viewport" content="width=device-width" />
 <html ng-app="warapp">
 <head>
   <title>Compare users</title>
 <link rel='stylesheet' type='text/css' href='./css/bootstrap.min.css'/>
-<link rel
 <script src="./q.min.js"></script>
 <script src="./angular.min.js"></script>
 <script src="./warapp/main.js"></script>
 </head>
 <body>
-    <div id='content' ng-controller="WargamingController" ng-cloak class='text-center'>
+    <div id='content' ng-controller="WargamingController as warCtrl" ng-cloak class='text-center'>
       <form role='form' class='form-inline'>
         <div class='form-group'>
-            <input class='form-control' type='text' ng-model='first_user' value='zopikrotik'>
+            <input class='form-control' type='text' ng-model='warCtrl.first_user' value='zopikrotik'>
         </div>
         <div class='form-group'>
-            <input class='form-control' type='text' ng-model='second_user' value='123'>
+            <input class='form-control' type='text' ng-model='warCtrl.second_user' value='123'>
         </div>
-          <button class='btn btn-default' ng-click='compareUsers()' value='Compare'
+          <button class='btn btn-default' ng-click='warCtrl.compareUsers()' value='Compare'
 >Compare</button>
       </form>
+      <div class='row'>
+        <div class='col-md-6'>
+          {{warCtrl.first_obj.countMedals()}}
+        </div>
+        <div class='col-md-6'>
+          {{warCtrl.second_obj.countMedals()}}
+        </div>
+      </div>
     </div>
+
 </body>
 </html>

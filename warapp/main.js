@@ -3,27 +3,57 @@ var app_id = "ac8d8479ff8f65e649d928b2d82fea68";
 
 app.controller("WargamingController", function($scope) {
     var that = this;
-    $scope.pressures = [];
-    $scope.first_user = 'zopikrotik';
-    $scope.second_user = '123';
+    this.pressures = [];
+    this.first_user = 'zopikrotik';
+    this.second_user = '123';
+    this.first_obj = {};
+    this.second_obj = {};
+    this.first_medals = 5;
+    this.second_medals = 4;
     a = 3;
     var b = 3;
 
-    $scope.compareUsers = function() {
-        setObjectForUser($scope.first_user, $scope.first_obj);
-        setObjectForUser($scope.second_user, $scope.second_obj);
+    this.compareUsers = function() {
+        setObjectForUser(that.first_user).then(function(ar) {
+          that.first_obj = new User(ar[0], that.first_user, ar[1].data);
+          $scope.$apply();
+        }).done();
+        setObjectForUser(that.second_user).then(function(ar) {
+          that.second_obj = new User(ar[0], that.second_user, ar[1].data);
+          $scope.$apply();
+        }).done();
     }
 });
 
-function setObjectForUser(nickname, variableToSet) {
-    var user = variableToSet;
+function setObjectForUser(nickname) {
+    var deferred = Q.defer();
     getUserIdByNickname(nickname).then(function(id) {
         console.log(id);
+        var iId = id;
         getUserDataById(id).then(function(oUser) {
             user = oUser;
             console.log(user);
+            deferred.resolve([iId, oUser]);
         });
     });
+    return deferred.promise;
+}
+
+function User(id, nickname, data) {
+  return {
+    "data": data,
+    "id": id,
+    "nickname": nickname,
+
+    countMedals: function() {
+      var ach = this.data[id].achievements;
+      var sum = 0;
+      for (var a in ach) {
+        sum = sum + ach[a];
+      }
+      return sum;
+    }
+  }
 }
 
 function getUserIdByNickname(nickname) {
