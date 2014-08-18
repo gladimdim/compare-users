@@ -4,6 +4,8 @@ var app_id = "ac8d8479ff8f65e649d928b2d82fea68";
 app.controller("WargamingController", function($scope) {
     var that = this;
     $scope.pressures = [];
+    $scope.first_user = 'zopikrotik';
+    $scope.second_user = '123';
     a = 3;
     var b = 3;
 
