@@ -3,26 +3,21 @@ var app_id = "ac8d8479ff8f65e649d928b2d82fea68";
 
 app.controller("WargamingController", function($scope) {
     var that = this;
-    this.pressures = [];
     this.first_user = 'zopikrotik';
-    this.second_user = '123';
+    this.second_user = 'nikbunny';
     this.first_obj = {};
     this.second_obj = {};
-    this.first_medals = 5;
-    this.second_medals = 4;
-    a = 3;
-    var b = 3;
+    this.compare_object = {};
+    this.war_api = new WargamingAPI("ru");
 
     this.compareUsers = function() {
-        setObjectForUser(that.first_user).then(function(ar) {
-          that.first_obj = new User(ar[0], that.first_user, ar[1].data);
-          $scope.$apply();
-        }).done();
-        setObjectForUser(that.second_user).then(function(ar) {
-          that.second_obj = new User(ar[0], that.second_user, ar[1].data);
-          $scope.$apply();
-        }).done();
-    }
+        Q.all([setObjectForUser(that.first_user), setObjectForUser(that.second_user)]).spread(function(ar1, ar2) {
+            that.first_obj = new User(ar1[0], that.first_user, ar1[1].data);
+            that.second_obj = new User(ar2[0], that.second_user, ar2[1].data);
+            that.compare_object = new Comparison(that.first_obj.getAchievements(), that.second_obj.getAchievements());
+            $scope.$apply();             
+        });
+    };
 });
 
 function setObjectForUser(nickname) {
@@ -37,7 +32,7 @@ function setObjectForUser(nickname) {
         });
     });
     return deferred.promise;
-}
+};
 
 function User(id, nickname, data) {
   return {
@@ -46,15 +41,19 @@ function User(id, nickname, data) {
     "nickname": nickname,
 
     countMedals: function() {
-      var ach = this.data[id].achievements;
+      var ach = this.getAchievements();
       var sum = 0;
       for (var a in ach) {
         sum = sum + ach[a];
       }
       return sum;
+    },
+
+    getAchievements: function() {
+        return this.data[id].achievements;
     }
   }
-}
+};
 
 function getUserIdByNickname(nickname) {
     var url = "https://api.worldoftanks.ru/wot/account/list/?application_id=" + app_id + "&search=" + nickname;
@@ -74,12 +73,10 @@ function getUserDataById(id) {
         p.resolve(oJSON);
     });
     return p.promise;
-}
+};
 
 function requestOkText(url) {
         "use strict";
-        /*global XMLHttpRequest */
-        /*global Q */
         var request = new XMLHttpRequest(),
             deferred = Q.defer();
 
@@ -104,4 +101,14 @@ function requestOkText(url) {
         request.onprogress = onprogress;
         request.send();
         return deferred.promise;
+};
+
+function getAchievementDescriptions(lang) {
+    var url = "https://api.worldoftanks.ru/wot/encyclopedia/achievements/?application_id=" + app_id + "&language=" + lang;
+    var p = Q.defer();
+    requestOkText(url).then(function(response_text) {
+        var oJSON = JSON.parse(response_text);
+        p.resolve(oJSON.data);
+    });
+    return p.promise;
 };

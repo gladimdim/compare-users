@@ -4,8 +4,10 @@
 <head>
   <title>Compare users</title>
 <link rel='stylesheet' type='text/css' href='./css/bootstrap.min.css'/>
-<script src="./q.min.js"></script>
-<script src="./angular.min.js"></script>
+<script src="./warapp/Comparison.js"></script>
+<script src="./warapp/WargamingAPI.js"></script>
+<script src="./lib/q.min.js"></script>
+<script src="./lib/angular.min.js"></script>
 <script src="./warapp/main.js"></script>
 </head>
 <body>
@@ -21,11 +23,28 @@
 >Compare</button>
       </form>
       <div class='row'>
-        <div class='col-md-6'>
+        <div class='col-xs-4'>
           {{warCtrl.first_obj.countMedals()}}
         </div>
-        <div class='col-md-6'>
+        <div class='col-xs-4' ng-show='warCtrl.first_obj.countMedals()'>
+          Medals
+        </div>
+        <div class='col-xs-4'>
           {{warCtrl.second_obj.countMedals()}}
+        </div>
+      </div>
+
+      <div class='row bg-warning' ng-repeat='compared in warCtrl.compare_object.getComparedAchievements()'>
+        <div class='col-xs-4'>
+          {{compared.compare_data[0]}}
+        </div>
+        <div class='col-xs-4'>
+          <img ng-src="{{warCtrl.war_api.getAchievementObject(compared.name).image}}" class='img-responsive center-block'></img>
+          {{warCtrl.war_api.getAchievementObject(compared.name).name_i18n || compared.name}} - {{warCtrl.war_api.getAchievementObject(compared.name).description}}
+
+        </div>
+        <div class='col-xs-4'>
+          {{compared.compare_data[1]}}
         </div>
       </div>
     </div>
