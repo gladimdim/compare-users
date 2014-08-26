@@ -35,8 +35,12 @@ function generateChartOptions() {
             interactive: true,
             tooltips: true,
             tooltip: function(key, x, y, e, graph) {
-                    return "<div style='background-color: #d66666'>" + key + "</div>\
-                     <divzzzz>" + x + ":" + y + "</div>";
+                var ach = e.series.values[e.pointIndex].ref_obj;
+                return "<div style='background-color: #d66666' class='center-block h1'>" + key + "</div>\
+                    <div class='h4'><img class='img-responsive center-block' src='" + ach.image + "'></img><p>\
+                    " + x + ":" + y + "</div>\
+                    <div class='center-block'>" + ach.description + "</div><p>\
+                    <div><pre>" + ach.condition + "</div></div>";
             },
             transitionDuration: 500,
             xAxis: {

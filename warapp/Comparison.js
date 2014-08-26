@@ -29,12 +29,14 @@ var Comparison = function(first_ach, second_ach, u1, u2, war_api) {
 
 		d3Obj[0].values.push({
 			label: name_i18n,
-			value: first_ach[key]
+			value: first_ach[key],
+			ref_obj: ach
 		});
 
 		d3Obj[1].values.push({
 			label: name_i18n,
-			value: second_ach[key]
+			value: second_ach[key],
+			ref_obj: ach
 		});
 
 
