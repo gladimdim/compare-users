@@ -4,10 +4,16 @@
 <head>
   <title>Compare users</title>
 <link rel='stylesheet' type='text/css' href='./css/bootstrap.min.css'/>
+<link rel='stylesheet' type='text/css' href='./css/nv.d3.min.css'/>
+<link rel='stylesheet' type='text/css' href='./css/styles.css'/>
+<script src="./lib/angular.min.js"></script>
+<script src="./lib/d3.min.js"></script>
+<script src="./lib/nv.d3.min.js"></script>
+<script src="./lib/angular-nvd3.min.js"></script>
 <script src="./warapp/Comparison.js"></script>
 <script src="./warapp/WargamingAPI.js"></script>
 <script src="./lib/q.min.js"></script>
-<script src="./lib/angular.min.js"></script>
+
 <script src="./warapp/main.js"></script>
 </head>
 <body>
@@ -19,9 +25,14 @@
         <div class='form-group'>
             <input class='form-control' type='text' ng-model='warCtrl.second_user' value='123'>
         </div>
-          <button class='btn btn-default' ng-click='warCtrl.compareUsers()' value='Compare'
->Compare</button>
+          <button class='btn btn-default' ng-click='warCtrl.compareUsers()' value='Compare'>Compare</button>
+          <div class='checkbox'>
+            <label>
+              <input type='checkbox' ng-model='warCtrl.showChart' ng-change='warCtrl.updateChart(warCtrl.showChart)'>Show as chart
+            </label>
+            </div>
       </form>
+
       <div class='row'>
         <div class='col-xs-4'>
           {{warCtrl.first_obj.countMedals()}}
@@ -34,20 +45,22 @@
         </div>
       </div>
 
-      <div class='row bg-warning' ng-repeat='compared in warCtrl.compare_object.getComparedAchievements()'>
+      <div class='row' ng-repeat='compared in warCtrl.compare_object.getComparedAchievements()' ng-class="compared.color(compared.name)" ng-hide='warCtrl.showChart'>
         <div class='col-xs-4'>
           {{compared.compare_data[0]}}
         </div>
         <div class='col-xs-4'>
           <img ng-src="{{warCtrl.war_api.getAchievementObject(compared.name).image}}" class='img-responsive center-block'></img>
           {{warCtrl.war_api.getAchievementObject(compared.name).name_i18n || compared.name}} - {{warCtrl.war_api.getAchievementObject(compared.name).description}}
-
         </div>
         <div class='col-xs-4'>
           {{compared.compare_data[1]}}
         </div>
       </div>
+      <nvd3 options="warCtrl.chart_options" data="warCtrl.compare_object.getD3ComparedData()" ng-show='warCtrl.showChart'></nvd3>
     </div>
+
+   
 
 </body>
 </html>

@@ -1,4 +1,4 @@
-var app = angular.module("warapp", []);
+var app = angular.module("warapp", ["nvd3"]);
 var app_id = "ac8d8479ff8f65e649d928b2d82fea68";
 
 app.controller("WargamingController", function($scope) {
@@ -8,17 +8,55 @@ app.controller("WargamingController", function($scope) {
     this.first_obj = {};
     this.second_obj = {};
     this.compare_object = {};
+    this.showChart = true;
     this.war_api = new WargamingAPI("ru");
-
+    this.chart_options = generateChartOptions();
     this.compareUsers = function() {
         Q.all([setObjectForUser(that.first_user), setObjectForUser(that.second_user)]).spread(function(ar1, ar2) {
             that.first_obj = new User(ar1[0], that.first_user, ar1[1].data);
             that.second_obj = new User(ar2[0], that.second_user, ar2[1].data);
-            that.compare_object = new Comparison(that.first_obj.getAchievements(), that.second_obj.getAchievements());
+            that.compare_object = new Comparison(that.first_obj.getAchievements(), that.second_obj.getAchievements(), that.first_user, that.second_user, that.war_api);
             $scope.$apply();             
         });
     };
+
 });
+
+function generateChartOptions() {
+    return {
+        chart: {
+            type: 'multiBarHorizontalChart',
+            height: 2000,
+            x: function(d){return d.label;},
+            y: function(d){return d.value;},
+            showValues: true,
+            stacked: true,
+            showControls: false,
+            interactive: true,
+            tooltips: true,
+            tooltip: function(key, x, y, e, graph) {
+                    return "<div style='background-color: #d66666'>" + key + "</div>\
+                     <divzzzz>" + x + ":" + y + "</div>";
+            },
+            transitionDuration: 500,
+            xAxis: {
+                showMaxMin: false
+            },
+            yAxis: {
+                axisLabel: 'Values',
+                tickFormat: function(d){
+                    return d3.format(',.2f')(d);
+                }
+            },
+            margin: {
+                top: 30,
+                right: 20,
+                bottom: 50,
+                left: 175
+            }
+        }
+    }
+}
 
 function setObjectForUser(nickname) {
     var deferred = Q.defer();
