@@ -39,21 +39,41 @@ var Comparison = function(first_ach, second_ach, u1, u2, war_api) {
 			ref_obj: ach
 		});
 
+		var first_width = 0;
+	    var second_width =  0;
+	    var first_value = first_ach[key];
+	    var second_value = second_ach[key];
+	    if (first_value === 0) {
+	    	first_width = "0%";
+	    	second_width = "100%";
+	    } else if (second_value === 0) {
+			first_width = "100%";
+	    	second_width = "0%";
+	    } else if (first_value >= second_value) {
+	        first_width = "100%";
+	        second_width = 100 * second_value / first_value;
+	        second_width = second_width + "%";
+	    } else {
+	        second_width = "100%";
+	        first_width = 100 * first_value / second_value;
+	        first_width = first_width + "%";
+	    }
 
 		joint_achievements.push({
 			name: key,
-			compare_data: [first_ach[key], second_ach[key]],
-			color: function(key) {
+			compare_data: [first_value, second_value],
+			/*color: function(key) {
 				if (first_ach[key] < second_ach[key]) {
 					return "bg-danger";
-				} else if (first_ach[key] === second_ach[key]) {
+				} else if (first_value === second_value) {
 					return "bg-info";
 				} else  {
 					return "bg-success";
 				}
-			},
+			},*/
 			key: key,
-			values: [first_ach[key], second_ach[key]]
+			"first_width": first_width,
+			"second_width": second_width
 		});
 	}
 

@@ -8,7 +8,7 @@ app.controller("WargamingController", function($scope) {
     this.first_obj = {};
     this.second_obj = {};
     this.compare_object = {};
-    this.showChart = true;
+    this.showChart = false;
     this.war_api = new WargamingAPI("ru");
     this.chart_options = generateChartOptions();
     this.compareUsers = function() {
@@ -19,7 +19,17 @@ app.controller("WargamingController", function($scope) {
             $scope.$apply();             
         });
     };
+});
 
+app.directive("achievementCompare", function() {
+    return {
+        restrict: "E",
+        template: '<h5 style="height: 2rem">{{warCtrl.war_api.getAchievementObject(compared.name).name_i18n || compared.name}} - {{warCtrl.war_api.getAchievementObject(compared.name).description}}</h5>\
+            <div style="width: 100%; height: 4rem; margin-bottom: 0.5rem;">\
+            <div style="width: {{compared.first_width}}; background-color: grey; border: 1px solid black;">{{compared.compare_data[0]}}</div>\
+            <div style="width: {{compared.second_width}}; background-color: red; border: 1px solid black;">{{compared.compare_data[1]}}</div>\
+            </div>'
+    };
 });
 
 function generateChartOptions() {
