@@ -1,4 +1,4 @@
-var app = angular.module("warapp", ["nvd3"]);
+var app = angular.module("warapp", []);
 var app_id = "ac8d8479ff8f65e649d928b2d82fea68";
 
 app.controller("WargamingController", function($scope) {
@@ -8,9 +8,7 @@ app.controller("WargamingController", function($scope) {
     this.first_obj = {};
     this.second_obj = {};
     this.compare_object = {};
-    this.showChart = false;
     this.war_api = new WargamingAPI("ru");
-    this.chart_options = generateChartOptions();
     this.compareUsers = function() {
         Q.all([setObjectForUser(that.first_user), setObjectForUser(that.second_user)]).spread(function(ar1, ar2) {
             that.first_obj = new User(ar1[0], that.first_user, ar1[1].data);
@@ -24,53 +22,19 @@ app.controller("WargamingController", function($scope) {
 app.directive("achievementCompare", function() {
     return {
         restrict: "E",
-        template: '<h5 style="height: 2rem">{{warCtrl.war_api.getAchievementObject(compared.name).name_i18n || compared.name}} - {{warCtrl.war_api.getAchievementObject(compared.name).description}}</h5>\
-            <div style="width: 100%; height: 4rem; margin-bottom: 0.5rem;">\
-            <div style="width: {{compared.first_width}}; background-color: grey; border: 1px solid black;">{{compared.compare_data[0]}}</div>\
-            <div style="width: {{compared.second_width}}; background-color: red; border: 1px solid black;">{{compared.compare_data[1]}}</div>\
+        template: '<div style="background-color: #FFCC99">\
+            <img ng-src="{{warCtrl.war_api.getAchievementObject(compared.name).image}}" class="img-responsive center-block"></img>\
+            {{warCtrl.war_api.getAchievementObject(compared.name).name_i18n || compared.name}} - {{warCtrl.war_api.getAchievementObject(compared.name).description}}</div>\
+            <div style="width: 100%; height: 4rem;">\
+            <div style="width: 100%; border: 1px solid black;">\
+                <div style="width: {{compared.first_width}}; background-color: #3399FF;">{{compared.compare_data[0]}}</div>\
+            </div>\
+            <div style="width: 100%; border: 1px solid black;">\
+                <div style="width: {{compared.second_width}}; background-color: #FF9966;">{{compared.compare_data[1]}}</div>\
+            </div>\
             </div>'
     };
 });
-
-function generateChartOptions() {
-    return {
-        chart: {
-            type: 'multiBarHorizontalChart',
-            height: 2000,
-            x: function(d){return d.label;},
-            y: function(d){return d.value;},
-            showValues: true,
-            stacked: true,
-            showControls: false,
-            interactive: true,
-            tooltips: true,
-            tooltip: function(key, x, y, e, graph) {
-                var ach = e.series.values[e.pointIndex].ref_obj;
-                return "<div style='background-color: #d66666' class='center-block h1'>" + key + "</div>\
-                    <div class='h4'><img class='img-responsive center-block' src='" + ach.image + "'></img><p>\
-                    " + x + ":" + y + "</div>\
-                    <div class='center-block'>" + ach.description + "</div><p>\
-                    <div><pre>" + ach.condition + "</div></div>";
-            },
-            transitionDuration: 500,
-            xAxis: {
-                showMaxMin: false
-            },
-            yAxis: {
-                axisLabel: 'Values',
-                tickFormat: function(d){
-                    return d3.format(',.2f')(d);
-                }
-            },
-            margin: {
-                top: 30,
-                right: 20,
-                bottom: 50,
-                left: 175
-            }
-        }
-    }
-}
 
 function setObjectForUser(nickname) {
     var deferred = Q.defer();

@@ -30,7 +30,6 @@ var WargamingAPI = function(language) {
 			return transformKeyToCamelCase(new_key);
 		}
 	};
-
 	//some names of achievements cannot be transformed by just removing '_' and doing camel case
 	//we need to hard-code corresponding mappings
 	var transformKeyForSeries = function(key) {
